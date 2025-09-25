@@ -1,54 +1,60 @@
-# Calculadora simple en Python
+import tkinter as tk
 
-def suma(a, b):
-    return a + b
+# Clase de la Calculadora
+class Calculadora:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Calculadora en Python")
+        self.root.geometry("400x500")
+        self.root.configure(bg="#222")
 
-def resta(a, b):
-    return a - b
+        # Variable para mostrar la operación y el resultado
+        self.operacion = ""
+        self.result_var = tk.StringVar()
 
-def multiplicacion(a, b):
-    return a * b
+        # Pantalla de resultados
+        pantalla = tk.Entry(root, textvariable=self.result_var, font=("Arial", 24), bd=10, insertwidth=2,
+                            width=15, borderwidth=4, bg="#eee", justify="right")
+        pantalla.grid(row=0, column=0, columnspan=4, pady=20)
 
-def division(a, b):
-    if b == 0:
-        return "Error: no se puede dividir entre cero"
-    return a / b
+        # Botones
+        botones = [
+            ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("/", 1, 3),
+            ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("*", 2, 3),
+            ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
+            ("0", 4, 0), (".", 4, 1), ("C", 4, 2), ("+", 4, 3),
+            ("=", 5, 0)
+        ]
 
-def calculadora():
-    print("=== Calculadora en Python ===")
-    print("Operaciones disponibles:")
-    print("1. Suma")
-    print("2. Resta")
-    print("3. Multiplicación")
-    print("4. División")
-    print("5. Salir")
+        for (texto, fila, columna) in botones:
+            if texto == "=":
+                boton = tk.Button(root, text=texto, padx=80, pady=20, font=("Arial", 18), bg="#4CAF50", fg="white",
+                                  command=self.calcular)
+                boton.grid(row=fila, column=columna, columnspan=4, pady=10)
+            else:
+                boton = tk.Button(root, text=texto, padx=20, pady=20, font=("Arial", 18), bg="#333", fg="white",
+                                  command=lambda t=texto: self.presionar(t))
+                boton.grid(row=fila, column=columna, pady=5)
 
-    while True:
-        opcion = input("\nElige una opción (1-5): ")
-
-        if opcion == "5":
-            print("¡Hasta luego!")
-            break
-
-        if opcion in ["1", "2", "3", "4"]:
-            try:
-                num1 = float(input("Ingresa el primer número: "))
-                num2 = float(input("Ingresa el segundo número: "))
-            except ValueError:
-                print("Por favor ingresa valores numéricos.")
-                continue
-
-            if opcion == "1":
-                print(f"Resultado: {suma(num1, num2)}")
-            elif opcion == "2":
-                print(f"Resultado: {resta(num1, num2)}")
-            elif opcion == "3":
-                print(f"Resultado: {multiplicacion(num1, num2)}")
-            elif opcion == "4":
-                print(f"Resultado: {division(num1, num2)}")
+    def presionar(self, tecla):
+        if tecla == "C":
+            self.operacion = ""
+            self.result_var.set("")
         else:
-            print("Opción no válida, intenta de nuevo.")
+            self.operacion += str(tecla)
+            self.result_var.set(self.operacion)
+
+    def calcular(self):
+        try:
+            resultado = str(eval(self.operacion))
+            self.result_var.set(resultado)
+            self.operacion = resultado
+        except:
+            self.result_var.set("Error")
+            self.operacion = ""
 
 # Ejecutar la calculadora
 if __name__ == "__main__":
-    calculadora()
+    root = tk.Tk()
+    app = Calculadora(root)
+    root.mainloop()
